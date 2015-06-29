@@ -1,0 +1,32 @@
+use gzha1710;
+
+add file mapper.py;
+add file reducer.py;
+
+from
+(map owner,date_taken,place_url
+using 'mapper.py'
+as owner,country,duration
+from
+	(
+select photo_table.owner,photo_table.date_taken,place_table.place_url
+	from
+		(select place_id,place_url
+		from share.place)place_table
+		join
+		(select owner,date_taken,place_id
+		from share.photo)photo_table
+		on place_table.place_id=photo_table.place_id
+	cluster by photo_table.owner,photo_table.date_taken	
+)user_data_place
+)owner_date_duration
+reduce owner,country,duration
+using 'reducer.py'
+as owner,record
+;
+
+
+
+
+
+
